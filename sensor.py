@@ -3,7 +3,7 @@
 import time
 from gpiozero import MotionSensor
 
-def check_motion(pin):
+def detect_motion(pin):
 	pir = []
 	for n in pin:
 		pir.append(MotionSensor(n))
