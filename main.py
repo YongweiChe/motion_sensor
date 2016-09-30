@@ -1,5 +1,4 @@
 #!/usr/bin/python2
-
 import os
 import sensor
 import sys
