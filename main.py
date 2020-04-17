@@ -4,7 +4,7 @@ import sensor
 import datetime
 import ConfigParser
 
-#reads settings.conf for pin, email_enabled, and email
+#reads settings.conf for image location, pin, email_enabled, and email
 config = ConfigParser.RawConfigParser()
 conf = r'settings.conf'
 config.read(conf)
@@ -28,4 +28,7 @@ while True:
 	if sensor.detect_motion(pins) is True:
 		if email_enabled == 'true':
 			sensor.send_email(email, subject, message)
+			sensor.take_picture()
 		time.sleep(3600)
+
+
