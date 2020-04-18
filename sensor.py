@@ -17,11 +17,12 @@ def detect_motion(pin):
 			return True
 	return False
 
-def send_email(email, subject, message):
-        send = 'echo ' +  message + ' | mutt -s ' + subject + ' -- ' + email
+def send_email(email, subject, message, attachment = ''):
+	if attachment == '':
+        	send = 'echo ' + message + ' | mutt -s ' + subject + ' -- ' + email
+	else:
+		send = 'echo ' + message + ' | mutt -s ' + subject + ' -a ' + attachment + ' -- ' + email
         subprocess.call(send, shell=True)
-
-
 
 #takes a picture
 def take_picture():
@@ -32,6 +33,9 @@ def take_picture():
         camera = picamera.PiCamera()
         camera.start_preview()
         time.sleep(2)
-        camera.capture(config.get('settings', 'location')  + datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S") +  '.jpg')
+	
+	image_name = config.get('settings', 'location') + datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S") + '.jpg'
+	camera.capture(image_name)
         camera.stop_preview()
 	camera.close()
+	return(image_name)

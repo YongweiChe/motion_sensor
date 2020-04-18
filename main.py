@@ -19,16 +19,16 @@ email_enabled = config.get('settings', 'email_enabled')
 email_enabled = email_enabled.strip(' ')
 email_enabled = email_enabled.lower()
 email = config.get('settings', 'email')
-
-subject = "ALERT MOTION DETECTED"
-message = "Motion detected on " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+image_email = config.get('settings', 'image_email')
+subject = "ALERT_MOTION_DETECTED"
+message = "Motion detected on " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
 #detects motion, if motion is detected, sleep for one hour
 while True:
 	if sensor.detect_motion(pins) is True:
+		image_name = sensor.take_picture()
 		if email_enabled == 'true':
 			sensor.send_email(email, subject, message)
-			sensor.take_picture()
+			sensor.send_email(image_email, 'Image_of_Motion', message, image_name) 
 		time.sleep(3600)
-
 
