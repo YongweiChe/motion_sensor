@@ -4,10 +4,10 @@ import sensor
 import datetime
 import ConfigParser
 
-#reads settings.conf for image location, pin, email_enabled, and email
+#reads motion_sensor.conf for image location, pin, email_enabled, and email
 config = ConfigParser.RawConfigParser()
-conf = 'settings.conf'
-config.read(conf)
+motion_sensor_conf = sensor.motion_sensor_conf 
+config.read(motion_sensor_conf)
 
 pins_string = config.get('settings', 'pin').split(', ')
 pins = []

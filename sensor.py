@@ -7,6 +7,11 @@ import picamera
 import time
 import ConfigParser
 import glob
+import os
+
+motion_sensor_conf = r'/etc/motion_sensor.conf'
+config = ConfigParser.RawConfigParser()
+config.read(motion_sensor_conf)
 
 def detect_motion(pin):
 	pir = []
@@ -26,26 +31,26 @@ def send_email(email, subject, message, attachment = ''):
         subprocess.call(send, shell=True)
 
 def update_webpage(image_name):
-                f = open("/var/www/image.html", "w")
+                f = open(config.get('settings', 'image_location'), "w")
                 f.write('<html> <p style = "font-size: 100%">Photo taken on ' + image_name[5:15] +' at ' + image_name[-9:-4] + '</p> <img src = image/' + image_name + ' alt = "image" style = "width:500px"></html>')
                 f.close()
 
 def update_past_images():
-	f = open("/var/www/links.html", "w")
+	f = open(config.get('settings', 'link_location'), "w")
 	f.write('<html>')
 	f.close()
-	f = open("/var/www/links.html", "a")
-	for image in glob.glob('/var/www/image/*'):
+	f = open(config.get('settings', 'link_location'), "a")
+	counter = 0
+	for image in sorted(glob.glob(config.get('settings', 'location') + '*'), reverse = True):
 		f.write('<a href = "' + image[9:] + '">Photo taken on ' + image[20:30] +' at ' + image[-9:-4] + '</a> <p> </p>')
+		counter += 1
+		if counter == 5:
+			break
 	f.write('</html>')
 	f.close()
 
 #takes a picture
 def take_picture():
-	config = ConfigParser.RawConfigParser()
-	conf = r'settings.conf'
-	config.read(conf)
-
         camera = picamera.PiCamera()
         camera.start_preview()
         time.sleep(2)
