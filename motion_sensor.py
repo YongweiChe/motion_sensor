@@ -1,11 +1,11 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 import time
 import sensor
 import datetime
-import ConfigParser
+import configparser
 
 #reads motion_sensor.conf for image location, pin, email_enabled, and email
-config = ConfigParser.RawConfigParser()
+config = configparser.RawConfigParser()
 motion_sensor_conf = sensor.motion_sensor_conf 
 config.read(motion_sensor_conf)
 
@@ -27,8 +27,8 @@ message = "Motion detected on " + datetime.datetime.now().strftime("%Y-%m-%d %H:
 while True:
 	if sensor.detect_motion(pins) is True:
 		image_name = sensor.take_picture()
-		sensor.update_past_images()
-		if email_enabled == 'true':
+		sensor.get_email_info()
+		if email_enabled == 'on':
 			sensor.send_email(email, subject, message)
 			sensor.send_email(image_email, 'Image_of_Motion', message, image_name) 
 		time.sleep(600)

@@ -1,12 +1,11 @@
 #
 #change the settings in this and copy it to /etc/ directory
-#
+#test
 
 [settings]
 pin = 17, 4, 11, 18
-email_enabled = TRUE
-email = YOUR EMAIL HERE 
-image_email = YOUR EMAIL HERE 
+image_email = YOUR EMAIL HERE
 location = /var/www/image/
 link_location = /var/www/links.html
 image_location = /var/www/image.html
+
