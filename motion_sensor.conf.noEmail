@@ -8,4 +8,7 @@ image_email = YOUR EMAIL HERE
 location = /var/www/html/image/
 link_location = /var/www/html/links.html
 image_location = /var/www/html/image.html
-
+mq_server = mq_server.yw.com
+mq_server_port = 5672
+web_server = web_server.yw.com
+web_server_port = 80

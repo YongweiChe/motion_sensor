@@ -4,26 +4,16 @@ import sensor
 import datetime
 import configparser
 
-
+#updates config file
+sensor.get_email_info()
 
 #reads motion_sensor.conf for image location, pin, email_enabled, and email
 motion_sensor_conf = r'/etc/motion_sensor.conf'
 config = configparser.RawConfigParser()
 config.read(motion_sensor_conf)
 
-mq_server = config.get('settings', 'mq_server')
-mq_server_port = config.get('settings', 'mq_server_port') 
-
-web_server = config.get('settings', 'web_server') 
-web_server_port = config.get('settings', 'web_server_port') 
-
-mac_address = sensor.findMac()
-#updates config file
-sensor.get_email_info(web_server)
-
 location = config.get('settings', 'location')
 image_location = config.get('settings', 'image_location')
-link_location = config.get('settings', 'link_location')
 pins_string = config.get('settings', 'pin').split(', ')
 pins = []
 for number in pins_string:
@@ -41,22 +31,10 @@ message = "Motion detected on " + datetime.datetime.now().strftime("%Y-%m-%d %H:
 #detects motion, if motion is detected, sleep for one hour
 while True:
 	if sensor.detect_motion(pins) is True:
-		image_name = sensor.take_picture(location)
-		full_image_name = location + image_name
-		image_json = sensor.picture_to_json(full_image_name)
-		sensor.send(image_json, mq_server)
-	
-		sensor.update_webpage(image_name, image_location, mac_address)
-		image_html_json = sensor.convert_to_json(image_location, mac_address)
-		sensor.send(image_html_json, mq_server)
-	
-		sensor.update_past_images(link_location)
-		links_html_json = sensor.convert_to_json(link_location, mac_address)
-		sensor.send(links_html_json, mq_server)
-
-		sensor.get_email_info(web_server)
+		image_name = sensor.take_picture(location, image_location)
+		sensor.get_email_info()
 		if email_enabled == 'on':
 			sensor.send_email(email, subject, message)
-			sensor.send_email(image_email, 'Image_of_Motion', message, full_image_name) 
+			sensor.send_email(image_email, 'Image_of_Motion', message, image_name) 
 		time.sleep(600)
 
