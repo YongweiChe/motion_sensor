@@ -113,15 +113,14 @@ def take_picture(location):
 	camera.close()
 	return(image_name)
 
-def picture_to_json(location, image_name):
-	full_image_name = location + image_name
+def picture_to_json(full_image_name):
 	f = open(full_image_name, "rb")
 	content = f.read()
 	f.close()
 	mac_address = findMac()
 	msg = base64.b64encode(content).decode("utf-8")
 	# a Python object (dict):
-	x = {"name": image_name, "content": msg, "mac": mac_address}
+	x = {"name": full_image_name, "content": msg, "mac": mac_address}
 	# convert into JSON:
 	y = json.dumps(x)
 

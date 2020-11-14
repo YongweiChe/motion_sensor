@@ -5,7 +5,7 @@ import pika
 def send(document):
 	credentials = pika.PlainCredentials(username='test', password='test')
 	connection = pika.BlockingConnection(
-    	pika.ConnectionParameters(host='192.168.1.10', credentials=credentials))
+    	pika.ConnectionParameters(host="mq_server.yw.com", credentials=credentials))
 
 	channel = connection.channel()
 

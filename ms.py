@@ -43,10 +43,6 @@ mq_username = config.get('settings', 'mq_username')
 mq_password = config.get('settings', 'mq_password')
 routing_key = config.get('settings', 'routing_key')
 
-detection_username = config.get('settings', 'detection_username')
-detection_password = config.get('settings', 'detection_password')
-detection_key = config.get('settings', 'detection_key')
-
 location = config.get('settings', 'location')
 image_location = config.get('settings', 'image_location')
 link_location = config.get('settings', 'link_location')
@@ -65,13 +61,13 @@ subject = "ALERT_MOTION_DETECTED"
 message = "Motion detected on " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
 
-#detects motion
+#detects motion, if motion is detected, sleep for one hour
 while True:
 	if sensor.detect_motion(pins) is True:
 		image_name = sensor.take_picture(location)
 		full_image_name = location + image_name
 		image_json = sensor.picture_to_json(location, image_name)
-		sensor.send(image_json, mq_server, username=detection_username, password=detection_password, routing_key=detection_key)
+		sensor.send(image_json, mq_server, username=mq_username, password=mq_password, routing_key=routing_key)
 	
 		sensor.update_webpage(image_name, image_location, mac_address)
 		image_html_json = sensor.convert_to_json(image_location, mac_address)
@@ -85,5 +81,5 @@ while True:
 		if email_enabled == 'on':
 			sensor.send_email(email, subject, message)
 			sensor.send_email(image_email, 'Image_of_Motion', message, full_image_name) 
-		time.sleep(30)
+		time.sleep(60)
 

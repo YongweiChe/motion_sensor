@@ -1,5 +1,22 @@
-# motion_sensor
-This is a motion sensor designed to run on a raspberry pi. It detects motion with a cooldown and sends an email if and when it detects motion. It also has a website component that stores the last five pictures detected by the sensor. 
+# Motion Sensor with Object Detection
 
-Motion_sensor.py and sensor.py need to be copied to /usr/local/sbin.
-You should put your own information into motion_sensor.conf.example and then copy it to /etc.
+## Hardware used in this project:
+- Raspberry Pi 2 Model B Rev 1.1
+- HC-SR501 PIR Motion Detector
+- 5 Megapixels sensor with OV5647 webcam sensor
+
+## How It Works:
+- Detect motion with multiple PIR sensors
+- Capture a image when motion is detected
+- Image is sent to a message queue for object detection
+- The image is processed using the YOLOv3 Object Detection Algorithm
+- The image is then sent to a message queue for the website
+- A web server pull the image from a message queue and update the website with the image
+
+## Software:
+- The application is written in Python
+
+## Configuration
+- Copy Motion_sensor.py and sensor.py to /usr/local/sbin.
+- Change parameters in /etc/motion_sensor.conf
+
