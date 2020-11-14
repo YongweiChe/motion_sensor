@@ -25,3 +25,30 @@ An python application running on Raspberry PI that detects motion, captures an i
 - Copy Motion_sensor.py and sensor.py to /usr/local/sbin.
 - Change parameters in /etc/motion_sensor.conf
 
+## Start up motion sensor
+
+- Get the IP address of the message queue server and point `mq_server.yw.com` to the IP address
+``` 
+192.168.1.3    mq_server.yw.com
+```
+- Open firewall port on the message queue server
+
+- Start the app
+```
+suod ./motion_sensor.py
+```
+
+### Start up message queue server
+- Start message queue server
+```
+/etc/init.d/rabbitmq-server
+```
+
+- Check Message Queue Server Status
+```
+/usr/sbin/rabbitmqctl status
+```
+- Open up firewall
+```
+iptables -I INPUT 2 -p tcp --dport 5672 -s 192.168.x.x/x -j ACCEPT
+```
