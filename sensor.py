@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-
 import subprocess
 from gpiozero import MotionSensor
 import datetime
 import picamera
 import time
-#import ConfigParser
 import configparser
 import glob
 import os
@@ -20,9 +18,11 @@ import netifaces
 # - username = "test"
 # - password = "test"
 ######
+
 #
 # message queue, send message to remote server using RabbitMQ
 #
+
 def send(json_document, mq_server, mq_server_port="5672", username="test", password="test", routing_key="queue"):
 	credentials = pika.PlainCredentials(username=username, password=password)
 	connection = pika.BlockingConnection(
@@ -35,9 +35,11 @@ def send(json_document, mq_server, mq_server_port="5672", username="test", passw
 	channel.basic_publish(exchange='', routing_key=routing_key, body=json_document)
 	print(" [x] Sent ")
 	connection.close()
+
 #
 # returns string that contains the first mac address found, if no mac address found returns "none"
 #
+
 def findMac():
 	interfaces = netifaces.interfaces()
 	for n in interfaces:
@@ -64,9 +66,11 @@ def send_email(email, subject, message, attachment = ''):
 	else:
 		send = 'echo ' + message + ' | mutt -s ' + subject + ' -a ' + attachment + ' -- ' + email
 	subprocess.call(send, shell=True)
+
 #
 # writes html for image.html and sends it over to the web server
 #
+
 def update_webpage(image_name, image_location, mac_address):
 	html_code = '<html> <p style = "font-size: 100%">Photo taken on ' + image_name[5:15] +' at ' + image_name[-9:-4] + ' from MAC Address: ' + mac_address + '</p> <img src = image/' + image_name + ' alt = "image" style = "width:500px"></html>'
 	f = open(image_location, "w")
@@ -76,6 +80,7 @@ def update_webpage(image_name, image_location, mac_address):
 #
 # writes html for links.html and sends it over to the web server
 #
+
 def update_past_images(link_location):
 	f = open(link_location, "w")
 	f.write('<html>')
