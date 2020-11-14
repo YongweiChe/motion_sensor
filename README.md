@@ -31,7 +31,11 @@ An python application running on Raspberry PI that detects motion, captures an i
 ``` 
 192.168.1.3    mq_server.yw.com
 ```
+
 - Open firewall port on the message queue server
+```
+iptables -I INPUT 2 -p tcp --dport 5672 -s 192.168.x.x/x -j ACCEPT
+```
 
 - Start the app
 ```
@@ -48,6 +52,7 @@ suod ./motion_sensor.py
 ```
 /usr/sbin/rabbitmqctl status
 ```
+
 - Open up firewall
 ```
 iptables -I INPUT 2 -p tcp --dport 5672 -s 192.168.x.x/x -j ACCEPT
