@@ -1,5 +1,0 @@
-.*.swp
-*.pyc
-build
-build/*
-.gitignore
