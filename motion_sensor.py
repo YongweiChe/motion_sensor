@@ -4,40 +4,19 @@ import sensor
 import datetime
 import configparser
 import subprocess
+import picamera
+import base64
+import json
 
 
 #reads motion_sensor.conf for image location, pin, email_enabled, and email
 motion_sensor_conf = r'/etc/motion_sensor.conf'
 config = configparser.RawConfigParser()
 
-def get_email_info(config_file, web_server, web_server_port="80"):
-	config.read(config_file)
-	"""
-	getInfo = "curl http://" + web_server + ":" + web_server_port + "/EMAIL_INFO.txt"
-	email_info = subprocess.check_output(getInfo, shell=True).decode()	  # decode() converts byte stream to text
-	"""
-	f = open("/home/pi/motion_sensor/email_info", "r")
-	email_info = f.read()
-	info_array = email_info.split("\n")
-	for string in info_array:
-		array = string.split(" = ")
-		config.set('settings', array[0], array[1])
-
-	f = open(config_file, 'w')
-	config.write(f)
-	f.close()
-
 config.read(motion_sensor_conf)
 
 mq_server = config.get('settings', 'mq_server')
 mq_server_port = config.get('settings', 'mq_server_port') 
-
-web_server = config.get('settings', 'web_server') 
-web_server_port = config.get('settings', 'web_server_port') 
-
-get_email_info(motion_sensor_conf, web_server, web_server_port)
-
-mac_address = sensor.findMac()
 
 mq_username = config.get('settings', 'mq_username')
 mq_password = config.get('settings', 'mq_password')
@@ -49,41 +28,46 @@ detection_key = config.get('settings', 'detection_key')
 
 location = config.get('settings', 'location')
 image_location = config.get('settings', 'image_location')
-link_location = config.get('settings', 'link_location')
+
 pins_string = config.get('settings', 'pin').split(', ')
 pins = []
 for number in pins_string:
 	number =int(number)
 	pins.append(number)
 
-email_enabled = config.get('settings', 'email_enabled')
-email_enabled = email_enabled.strip(' ')
-email_enabled = email_enabled.lower()
-email = config.get('settings', 'email')
-image_email = config.get('settings', 'image_email')
-subject = "ALERT_MOTION_DETECTED"
-message = "Motion detected on " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+### 
+serial   = 's001'
+mac_address = sensor.findMac().replace(':','')
+image_to_cloud = config.get('settings', 'image_to_cloud').strip(' ').lower()
+###
+camera = picamera.PiCamera()
+camera.start_preview()
+max_img_number = 3
+i = 0
+image_name_prefix = "img_" + serial + "_" + mac_address + "_"
 
+print("image to cloud : %s" % image_to_cloud)
 
-#detects motion
 while True:
-	if sensor.detect_motion(pins) is True:
-		image_name = sensor.take_picture(location)
-		full_image_name = location + image_name
-		image_json = sensor.picture_to_json(location, image_name)
-		sensor.send(image_json, mq_server, username=detection_username, password=detection_password, routing_key=detection_key)
-	
-		sensor.update_webpage(image_name, image_location, mac_address)
-		image_html_json = sensor.convert_to_json(image_location, mac_address)
-		sensor.send(image_html_json, mq_server, username=mq_username, password=mq_password, routing_key=routing_key)
-	
-		sensor.update_past_images(link_location)
-		links_html_json = sensor.convert_to_json(link_location, mac_address)
-		sensor.send(links_html_json, mq_server, username=mq_username, password=mq_password, routing_key=routing_key)
+  i += 1 if (i != max_img_number) else 0
+  image_name = image_name_prefix + str(i) + ".jpg"
 
-		get_email_info(motion_sensor_conf, web_server, web_server_port)
-		if email_enabled == 'on':
-			sensor.send_email(email, subject, message)
-			sensor.send_email(image_email, 'Image_of_Motion', message, full_image_name) 
-		time.sleep(30)
+  camera.capture(image_name)
+	
+  if image_to_cloud == 'on':
+    print ("sending image to cloud")
 
+    f = open(image_name, "rb")
+    content = f.read()
+    f.close()
+    msg = base64.b64encode(content).decode("utf-8")
+
+    x = {"name": image_name, "content": msg, "mac": mac_address}
+    y = json.dumps(x)
+
+    sensor.send(y, mq_server, username=detection_username, password=detection_password, routing_key=detection_key)
+
+  time.sleep(3)
+
+camera.stop_preview()
+camera.close()
