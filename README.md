@@ -14,8 +14,12 @@ An python application running on Raspberry PI that detects motion, captures an i
 - The image is then sent to a message queue for the website
 - A web server pull the image from a message queue and update the website with the image
 
-## Software:
+## Code
 - The application is written in Python
+
+## Third party software 
+- RabbitMQ - https://www.rabbitmq.com/
+- YOLOv3 - https://pjreddie.com/darknet/yolo/
 
 ## Configuration
 - Copy Motion_sensor.py and sensor.py to /usr/local/sbin.
