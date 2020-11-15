@@ -42,7 +42,7 @@ iptables -I INPUT 2 -p tcp --dport 5672 -s 192.168.x.x/x -j ACCEPT
 suod ./motion_sensor.py
 ```
 
-### Start up message queue server
+## Start up message queue server
 - Start message queue server
 ```
 /etc/init.d/rabbitmq-server
@@ -57,3 +57,11 @@ suod ./motion_sensor.py
 ```
 iptables -I INPUT 2 -p tcp --dport 5672 -s 192.168.x.x/x -j ACCEPT
 ```
+
+## Running YOLOv3
+```
+cd 
+source env/bin/activate
+cd ./object-detection-opencv 
+```
+
