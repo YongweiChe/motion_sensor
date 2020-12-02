@@ -8,8 +8,7 @@ import picamera
 import base64
 import json
 
-
-#reads motion_sensor.conf for image location, pin, email_enabled, and email
+# reads motion_sensor.conf for image location, pin, email_enabled, and email
 motion_sensor_conf = r'/etc/motion_sensor.conf'
 config = configparser.RawConfigParser()
 
@@ -26,8 +25,14 @@ detection_username = config.get('settings', 'detection_username')
 detection_password = config.get('settings', 'detection_password')
 detection_key = config.get('settings', 'detection_key')
 
+# web server image location
 location = config.get('settings', 'location')
+
+# image.html location
 image_location = config.get('settings', 'image_location')
+
+# local image folder 
+image_local_folder = config.get('settings', 'image_local_folder')
 
 pins_string = config.get('settings', 'pin').split(', ')
 pins = []
@@ -50,7 +55,7 @@ print("image to cloud : %s" % image_to_cloud)
 
 while True:
   i += 1 if (i != max_img_number) else 0
-  image_name = image_name_prefix + str(i) + ".jpg"
+  image_name = image_local_folder + "/" + image_name_prefix + str(i) + ".jpg"
 
   camera.capture(image_name)
 	
