@@ -1,5 +1,5 @@
 # Motion Sensor with Object Detection
-An python application running on Raspberry PI that detects motion, captures an image, and then identify interested object based on YOLOv3 Object Detection Algorithm. The final image is sent to a website for viewing.  
+A python application running on Raspberry PI that detects motion, captures an image, and then identify interested object based on YOLOv3 Object Detection Algorithm. The final image is sent to a website for viewing.  
 
 ## Hardware
 - Raspberry Pi 2 Model B Rev 1.1
